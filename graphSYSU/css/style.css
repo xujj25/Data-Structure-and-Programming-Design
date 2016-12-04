@@ -12,15 +12,22 @@ body
 	position: fixed;
 	left: 20px;
 	top: 20px;
+	z-index: 10;
+}
 
+button
+{
+	height: 40px;
+	width: 100px;
+	cursor: pointer;
+	color: white;
+	border: none;
+	outline: none;
 }
 
 #routeQuery {
-	height: 40px;
-	width: 100px;
 	background-color: #6d9be0;
-	color: white;
-	border: none;
+	box-shadow: 2px 2px 6px 0px grey;
 }
 
 #routeQuery:hover
@@ -28,12 +35,313 @@ body
 	background-color: #2E77E5;
 }
 
-#confirmBox
+.boxes
 {
+	margin-top: 10px;
+	width: 300px;
+	height: 240px;
+	background-color: white;
+	box-shadow: 5px 5px 10px 0px grey;
+}
+
+#placeSelect
+{
+	position: absolute;
+	top: 290px;
+	color: #2E77E5;
+	transition-duration: 10s;
+}
+
+#placeSelect tr
+{
+	height: 40px;
+}
+
+#placeSelect td
+{
+	width: 106px;
+	border: 1px solid lightgrey;
+	text-align: center;
+	cursor: pointer;
+}
+
+#placeSelect td:hover
+{
+	background-color: #2E77E5;
+	color: white;
+}
+
+#placeSelect>p
+{
+	width: 100px;
+	height: 40px;
+	/*border: 1px solid blue;*/
+	padding-left: 18px;
+	margin-left: auto;
+	margin-right: auto;
+}
+
+.tab
+{
+	padding-top: 5px;
+	height: 35px;
+	width: 150px;
+	float: left;
+	text-align: center;
+}
+
+.notChosenTab
+{
+	cursor: pointer;
+	background-color: #6d9be0;
+	color: white;
+}
+
+.notChosenTab:hover
+{
+	background-color: #2E77E5;
+}
+
+.chosenTab
+{
+	background-color: white;
+	color: grey;
+}
+
+#selectContainer
+{
+	width: 100px;
+	height: 100px;
+	/*border: 1px solid blue;*/
+	position: absolute;
+	left: 40px;
+	top: 120px;
+}
+
+#startSelect
+{
+	margin-bottom: 20px;
+	background-color: #5ce22f;
+}
+
+#startSelect:hover
+{
+	background-color: #44d132;
+}
+
+#endSelect
+{
+	background-color: #ff0000;
+}
+
+#endSelect:hover
+{
+	background-color: #f20000;
+}
+
+#resultContainer
+{
+	position: absolute;
+	top: 120px;
+	left: 150px;
+	width: 100px;
+	height: 100px;
+	/*border: 1px solid blue;*/
+}
+
+.result
+{
+	margin-bottom: 20px;
+	width: 100px;
+	height: 40px;
+	/*border: 1px solid blue;*/
+}
+
+.notChosenResult
+{
+	color: red;
+}
+
+.chosenResult
+{
+	color: green;
+}
+
+#confirmCommand
+{
+	position: absolute;
+	bottom: 0;
+	width: 300px;
+	height: 40px;
+	/*border: 1px solid blue;*/
+}
+
+#confirmCommand>div
+{
+	cursor: pointer;
+	float: left;
+	text-align: center;
+	color: #2E77E5;
+	width: 149px;
+	border: 1px solid lightgrey;
+	border-left: none;
+	border-bottom: none;
+	padding-top: 5px;
+	height: 35px;
+}
+
+#confirmCommand>div:hover
+{
+	background-color: #2E77E5;
+	color: white;
+}
+
+.place
+{
+	z-index: 2;
+	position: absolute;
+	width: 35px;
+	height: 56px;
+	background-size: 35px 56px;
+}
+
+.place:hover
+{
+	cursor: pointer;
+	transform:translateY(-10px);
+	transition-duration: 0.2s;
+}
+
+#place_0
+{
+	left: 934px;
+	top: 172px;
+}
+
+#place_1
+{
+	left: 1077px;
+	top: 272px;
+}
+
+#place_2
+{
+	left: 1101px;
+	top: 704px;
+}
+
+#place_3
+{
+	left: 933px;
+	top: 592px;
+}
+
+#place_4
+{
+	left: 433px;
+	top: 875px;
+}
+
+#place_5
+{
+	left: 772px;
+	top: 766px;
+}
+
+#place_6
+{
+	left: 647px;
+	top: 1113px;
+}
+
+#place_7
+{
+	left: 931px;
+	top: 953px;
+}
+
+#place_8
+{
+	left: 818px;
+	top: 1219px;
+}
+
+#place_9
+{
+	left: 895px;
+	top: 1404px;
+}
+
+.normalPlace
+{
+	background-image: url('../img/place_img.png');
+}
+
+.startPlace
+{
+	background-image: url('../img/placeStart.png');
+}
+
+.endPlace
+{
+	background-image: url('../img/placeEnd.png');
+}
+
+#pathContainer
+{
+	width: 1433px;
+	height: 1600px;
+	z-index: 1;
+}
+
+#infoContainer
+{
+	z-index: 10;
+	color: white;
 	width: 300px;
 	height: 300px;
-	background-color: white;
-	border: 1px solid blue;
+	position: fixed;
+	right: 20px;
+	top: 20px;
+	background-color: #6d9be0;
+	box-shadow: 0px 5px 10px 2px grey;
+}
+
+#closeTag
+{
+	cursor: pointer;
+	position: absolute;
+	right: 20px;
+	top: 20px;
+	width: 16px;
+	height: 16px;
+	background-image: url('../img/close.png');
+}
+
+#placeName
+{
+	position: absolute;
+	left: 20px;
+	/*top: 20px;*/
+}
+
+#briefInfo
+{
+	position: absolute;
+	left: 20px;
+	top: 50px;
+}
+
+#imgBox
+{
+	width: 260px;
+	height: 150px;
+	position: absolute;
+	left: 20px;
+	bottom: 20px;
+	/*border: 1px solid black;*/
+	/*background-image: url('../img/engineeringSchool.jpg');*/
+	background-size: 100% 100%;
 }
 
 path

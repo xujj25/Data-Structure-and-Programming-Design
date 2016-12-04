@@ -10,20 +10,88 @@
 	</head>
 
 	<body>
-		<iframe src="tabGates.html" width="500" height="500"></iframe>
 		<div id="routeQueryContainer">
-			<button id="routeQuery">路线查询</button>
-			<div id="confirmBox">
+			<button id="routeQuery" title="路线查询">路线查询</button>
+			<div id="confirmBox" class="boxes">
+				<div id="walkTab" class="tab chosenTab">步行</div>
+				<div id="carTab" class="tab notChosenTab">开车</div>
+
+				<div id="selectContainer">
+					<button id="startSelect">起点选择</button>
+					<button id="endSelect">终点选择</button>
+				</div>
+
+				<div id="resultContainer">
+					<div class="result notChosenResult" id="startResult">未选择！</div>
+					<div class="result notChosenResult" id="endResult">未选择！</div>
+				</div>
+
+				<div id="confirmCommand">
+					<div id="quit">收起</div>
+					<div id="agree">确认</div>
+				</div>
+
+
+			</div>
+			<div id="placeSelect" class="boxes">
+				<p id="selectTip"></p>
+				<table>
+					<tr>
+						<td>A</td>
+						<td>B</td>
+						<td>C</td>
+					</tr>
+					<tr>
+						<td>D</td>
+						<td>E</td>
+						<td>F</td>
+					</tr>
+					<tr>
+						<td>G</td>
+						<td>H</td>
+						<td>I</td>
+					</tr>
+					<tr>
+						<td>J</td>
+					</tr>
+				</table>
 
 			</div>
 		</div>
+
+		<div id="infoContainer">
+			<h2 id="placeName">小贴士：</h2>
+			<div id="closeTag"></div>
+			<p id="briefInfo">
+				1.点击地点图标<br>
+				即可获取地点信息简介<br>
+				<br>
+				2.点击页面左上角按钮<br>
+				可查找路径
+			</p>
+			<div id="imgBox"></div>
+		</div>
+
 		<div id="mapContainer">
+			<div id="placeContainer">
+				<div class="place normalPlace" id="place_0"></div>
+				<div class="place normalPlace" id="place_1"></div>
+				<div class="place normalPlace" id="place_2"></div>
+				<div class="place normalPlace" id="place_3"></div>
+				<div class="place normalPlace" id="place_4"></div>
+				<div class="place normalPlace" id="place_5"></div>
+				<div class="place normalPlace" id="place_6"></div>
+				<div class="place normalPlace" id="place_7"></div>
+				<div class="place normalPlace" id="place_8"></div>
+				<div class="place normalPlace" id="place_9"></div>
+			</div>
 
-			<svg width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
 
-				<path d="M487 1207
+			<svg id="pathContainer" width="100%" height="100%" version="1.1" xmlns="http://www.w3.org/2000/svg">
+
+				<!-- <path d="M487 1207
 					L605 1092
-					551 1048"/>
+					551 1048"/> -->
 
 			</svg>
 		</div>
