@@ -19,6 +19,28 @@
 					'图书馆', '工学院', '游泳馆',
 					'隧道', '新天地', '一饭', '花坛'];
 
+	ma.briefInfoSet = {
+		'北门': '东校园北门广场',
+		'超算': '国家超级计算广州中心',
+		'真草': '东校园东田径场',
+		'图书馆': '东校区图书馆',
+		'工学院': '中山大学工学院广场',
+		'游泳馆': '东校园游泳馆及健身房',
+		'隧道': '东校园隧道',
+		'新天地': 'GOGO新天地商业中心',
+		'一饭': '东校园学生第一饭堂',
+		'花坛': '东校园生活区中心花坛',
+	}
+
+	ma.properties = {
+		'startPlace': "",
+		'endPlace': "",
+		'route': null,
+		'routeLength': 0,
+		'timeCost': 0,
+		'transportation': "",
+	}
+
 	ma.init = function() {
 		$('#placeSelect').hide();
 		$('#confirmBox').hide();
@@ -30,11 +52,22 @@
 		$('td').each(function(index, el) {
 			$(this).html(that.placeSet[index]);
 		});
+		this.addPath();
+	}
+
+	ma.addPath = function() {
+
 	}
 
 	ma.listenRouteQueryClick = function() {
+		var that = this;
 		$('#routeQuery').click(function(event) {
-			$('#confirmBox').slideDown(100);
+			if ($(event.target).hasClass('underRestore')) {
+				that.restore();
+			} else {
+				$('#infoContainer').slideUp(100);
+				$('#confirmBox').slideDown(200);
+			}
 		});
 	}
 
@@ -77,57 +110,89 @@
 		});
 	}
 
-	ma.listenSelect = function() {
-		$('#placeSelect td').click(function(event) {
-			var placeName = $(event.target).html();
-			if ($('#selectTip').html() == '请选择起点') {
-				if (($('#endResult').html()).match(/:.*/) == (':' + placeName)) {
-					alert('请选择与终点不同的地点！');
-				} else {
-					$('#startResult').html('已选:' + placeName);
-					$('#startResult').attr('class', 'result chosenResult');
-					$('#placeSelect').slideUp();
-				}
-			} else {
-				if (($('#startResult').html()).match(/:.*/) == (':' + placeName)) {
-					alert('请选择与起点不同的地点！');
-				} else {
-					$('#endResult').html('已选:' + placeName);
-					$('#endResult').attr('class', 'result chosenResult');
-					$('#placeSelect').slideUp();
-				}
+	ma.setPlaceProper = function(enFlag1, placeName) {
+		var that = this;
+		$('.place').each(function(index, el) {
+			if (($(this).attr('title')).substr(3) == placeName) {
+				$(this).attr('class', 'place ' + enFlag1 + 'Place');
+				that.properties[enFlag1 + 'Place'] = placeName;
+				return false;
 			}
 		});
+	}
+
+	ma.setSelect = function(flag, placeName) {
+		var zhFlag = (flag ? '终点' : '起点');
+		var enFlag1 = (flag ? 'start' : 'end');
+		var enFlag2 = ((!flag) ? 'start' : 'end');
+		if (($('#' + enFlag2 + 'Result').html()).substr(3) == placeName) {
+			alert('请选择与'+ zhFlag +'不同的地点！');
+		} else {
+			this.setPlaceProper(enFlag1, placeName);
+			$('#' + enFlag1 + 'Result').html('已选:' + placeName);
+			$('#' + enFlag1 + 'Result').attr('class', 'result chosenResult');
+		}
+		$('#placeSelect').slideUp();
+	}
+
+	ma.listenSelect = function() {
+		var that = this;
+		$('#placeSelect td').click(function(event) {
+			var placeName = $(event.target).html();
+			that.setSelect($('#selectTip').html() == '请选择起点', placeName);
+		});
+	}
+
+	ma.changeRouteQueryButton = function(flag) {
+		if (flag) {
+			$('#routeQuery').html('还原地图');
+			$('#routeQuery').addClass('underRestore');
+		} else {
+			$('#routeQuery').html('路线查询');
+			$('#routeQuery').removeClass('underRestore');
+		}
+	}
+
+	ma.showResult = function() {
+		this.changeRouteQueryButton(true);
+		$('#placeName').html('查询结果：');
+		$('#briefInfo').html('起点：' + this.properties['startPlace']
+							 + '<br>终点：' + this.properties['endPlace']
+							 + '<br>路线如图，长度约' + this.properties['routeLength'] + '米'
+							 + '<br>' + this.properties['transportation']
+							 + '需要约' + this.properties['timeCost'] + '分钟');
+		$('#imgBox').css('background-image', 'none');
+		$('#confirmBox').slideUp(100);
+		$('#infoContainer').slideDown(200);
+	}
+
+	ma.setRouteProper = function() {
+		this.properties['routeLength'] = 3500;
+		this.properties['transportation'] = $('.chosenTab').html();
+		this.properties['timeCost'] =
+			(this.properties['routeLength'] /
+			 (this.properties['transportation'] == '步行' ? 70 : 500));
+		this.quitQuery();
 	}
 
 	ma.listenAgree = function() {
 		var that = this;
 		$('#agree').click(function(event) {
-			that.quitQuery();
+			that.setRouteProper();
 			$("html,body").animate({scrollTop:$(".startPlace").offset().top - 260}, 'fast');  //窗口定位至起点
+			that.showResult();
 		});
-	}
-
-	ma.briefInfoSet = {
-		'北门': '东校园北门广场',
-		'超算': '国家超级计算中心',
-		'真草': '东校园东田径场',
-		'图书馆': '东校区图书馆',
-		'工学院': '中山大学工学院广场',
-		'游泳馆': '东校园游泳馆及健身房',
-		'隧道': '东校园隧道',
-		'新天地': 'GOGO新天地商业中心',
-		'一饭': '东校园学生第一饭堂',
-		'花坛': '东校园生活区中心花坛',
 	}
 
 	ma.listenPlaceInfoQuery = function() {
 		var that = this;
 		$('.place').click(function(event) {
-			$('#infoContainer').slideDown(100);
+			$('#confirmBox').slideUp(100);
+			$('#infoContainer').slideDown(200);
 			var placeName = ($(event.target).attr('title')).substr(3);
 			$('#placeName').html('地名：' + placeName);
 			$('#briefInfo').html('简介：' + that.briefInfoSet[placeName]);
+			$('#imgBox').css('background-image', 'url(\"../img/spot/' + ($(this).index()) + '.jpg\")');
 		});
 	}
 
@@ -135,5 +200,11 @@
 		$('#closeTag').click(function(event) {
 			$('#infoContainer').slideUp(100);
 		});
+	}
+
+	ma.restore = function() {
+		this.changeRouteQueryButton(false);
+		$('.place').attr('class', 'place normalPlace');
+		$('#infoContainer').slideUp(100);
 	}
 })();

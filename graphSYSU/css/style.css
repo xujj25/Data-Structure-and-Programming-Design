@@ -2,6 +2,7 @@ body
 {
 	font-family: 'microsoft Yahei';
 	background-image: url('../img/eastcampus.jpg');
+	background-repeat: no-repeat;
 	width: 1433px;
 	height: 1600px;
 	/*padding: 0;*/
@@ -41,7 +42,7 @@ button
 {
 	margin-top: 10px;
 	width: 300px;
-	height: 240px;
+	height: 300px;
 	background-color: white;
 	box-shadow: 5px 5px 10px 0px grey;
 }
@@ -117,7 +118,7 @@ button
 	/*border: 1px solid blue;*/
 	position: absolute;
 	left: 40px;
-	top: 120px;
+	top: 140px;
 }
 
 #startSelect
@@ -144,7 +145,7 @@ button
 #resultContainer
 {
 	position: absolute;
-	top: 120px;
+	top: 140px;
 	left: 150px;
 	width: 100px;
 	height: 100px;
@@ -303,8 +304,8 @@ button
 	width: 300px;
 	height: 300px;
 	position: fixed;
-	right: 20px;
-	top: 20px;
+	left: 20px;
+	top: 70px;
 	background-color: #6d9be0;
 	box-shadow: 0px 5px 10px 2px grey;
 }
