@@ -56,7 +56,12 @@
 	}
 
 	ma.addPath = function() {
-
+		var start = {};
+		var end = {};
+		// $('svg').html('<path id="path_12" d="M 487 1207 L 605 1092 551 1048"/>');
+		// console.log($('#place_1').offset().top, $('#place_1').offset().left);
+		// $('path').hide();
+		// console.log(this.shortest_path);
 	}
 
 	ma.listenRouteQueryClick = function() {
@@ -167,7 +172,7 @@
 	}
 
 	ma.setRouteProper = function() {
-		this.properties['routeLength'] = 3500;
+		// this.properties['routeLength'] = 3500;
 		this.properties['transportation'] = $('.chosenTab').html();
 		this.properties['timeCost'] =
 			(this.properties['routeLength'] /
@@ -179,7 +184,8 @@
 		var that = this;
 		$('#agree').click(function(event) {
 			that.setRouteProper();
-			$("html,body").animate({scrollTop:$(".startPlace").offset().top - 260}, 'fast');  //窗口定位至起点
+			//窗口定位至起点
+			$("html,body").animate({scrollTop:$(".startPlace").offset().top - 260}, 'fast');
 			that.showResult();
 		});
 	}
@@ -187,6 +193,7 @@
 	ma.listenPlaceInfoQuery = function() {
 		var that = this;
 		$('.place').click(function(event) {
+			console.log($(event.target).offset().top + ' ' + $(event.target).offset().left);
 			$('#confirmBox').slideUp(100);
 			$('#infoContainer').slideDown(200);
 			var placeName = ($(event.target).attr('title')).substr(3);
@@ -207,4 +214,61 @@
 		$('.place').attr('class', 'place normalPlace');
 		$('#infoContainer').slideUp(100);
 	}
+
+	// 0 -- 北门  1 -- 超算 2 -- 真草 3 -- 图书馆 4 -- 工学院 5 -- 游泳馆 6 -- 隧道 7 -- 新天地 8 -- 一饭 9 -- 花坛
+
+	var max = 10000;
+	ma.path_length = new Array(
+		   [0, 400, max, 500, max, max, max, max, max, max],
+		   [400, 0, 500, 600, max, max, max, max, max, max],
+		   [max, 500, 0, 100, max, 500, max, 300, max, max],
+		   [500, 600, 100, 0, 780, 300, max, 250, max, max],
+		   [max, max, max, 780, 0, 500, 600, max, max, max],
+		   [max, max, 500, 300, 500, 0, 500, 500, max, max],
+		   [max, max, max, max, 600, 500, 0, max, 400, 500],
+		   [max, max, 300, 250, max, 500, max, 0, 300, max],
+		   [max, max, max, max, max, max, 400, 300, 0, 100],
+		   [max, max, max, max, max, max, 500, max, 100, 0]);  // path_length[i][j]为无向图各条边的长度（即实际距离）
+
+	ma.shortest_path = new Array(10);  // shortest_path[i][j]为从点i到点j的最短距离
+
+	// 使用floyed算法先求出每一对顶点之间的最短路径和具体的路径
+	ma.path = (function() {
+
+		var prev = new Array(10);  // prev[i][j]存储从点i到点j的路径上，点j的前一个点的序号
+
+		for (var i = 0; i < 10; i++) {
+			ma.shortest_path[i] = new Array(10);
+			prev[i] = new Array(10);
+
+			for (var j = 0; j < 10; j++)  {
+				ma.shortest_path[i][j] = ma.path_length[i][j];
+				prev[i][j] = ma.shortest_path[i][j] != max ? i : -1;
+			}
+		}
+
+		for (var k = 0; k <  10; k++)
+			for (var i = 0; i < 10; i++)
+				for (var j = 0; j < 10; j++) {
+					if (ma.shortest_path[i][k] + ma.shortest_path[k][j] < ma.shortest_path[i][j]) {
+						ma.shortest_path[i][j] = ma.shortest_path[i][k] + ma.shortest_path[k][j];
+						prev[i][j] = prev[k][j];
+					}
+				}
+
+		return prev;
+	}) ();
+
+	ma.findShortestPath = function(start, end) {
+		var way = [];
+		way[0] = end;
+
+		while (ma.path[start][end] != start) {
+			way.push(ma.path[start][end]);
+			end = ma.path[start][end];
+		}
+
+		way.push(start);
+		return way.reverse();
+	};
 })();
