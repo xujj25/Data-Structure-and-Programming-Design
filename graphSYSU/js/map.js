@@ -116,8 +116,8 @@
 		});
 	}
 
-	ma.quitQuery = function() {
-		$('.place').attr('class', 'place normalPlace');
+	ma.quitQuery = function(flag) {
+		if (!flag) {$('.place').attr('class', 'place normalPlace');}
 		$('#placeSelect').hide();
 		$('#confirmBox').slideUp(50);
 		$('.result').attr('class', 'result notChosenResult');
@@ -127,7 +127,7 @@
 	ma.listenQueryQuit = function() {
 		var that = this;
 		$('#quit').click(function(event) {
-			that.quitQuery();
+			that.quitQuery(false);
 		});
 	}
 
@@ -255,7 +255,7 @@
 				//窗口定位至起点
 				$("html,body").animate({scrollTop:$(".startPlace").offset().top - 260}, 'fast');
 				that.showResult();
-				that.quitQuery();
+				that.quitQuery(true);
 			}
 		});
 	}
