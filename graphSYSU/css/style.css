@@ -356,7 +356,7 @@ path
 	stroke-linejoin: round;
 	stroke-linecap: round;
 	fill: none;
-	stroke: #3ce226;
+	stroke: rgb(82, 152, 255);
 	stroke-width: 10;
 	fill-rule: evenodd;
 }
