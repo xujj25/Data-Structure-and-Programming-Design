@@ -10,7 +10,7 @@
 		this.listenSelect();
 		this.listenAgree();
 		this.listenPlaceInfoQuery();
-		this.listenCloseInfo();
+		this.listenCloseInfoContainer();
 	}
 
 	var ma = MapApp.prototype;
@@ -50,19 +50,51 @@
 			$(this).attr('title', '地名：' + that.placeSet[index]);
 		});
 		$('td').each(function(index, el) {
-			$(this).html(that.placeSet[index]);
+			$(this).attr('id', that.placeSet[index]);
+			$(this).html(that.placeSet[index] + '(' + index + ')');
 		});
-		this.addPath();
+		// this.addPath();
+
+
+		$('path').hide();
+		$('.place').each(function(index, el) {
+			$(this).html(index);
+		});
+	}
+/*
+	ma.hasDirectPathBetweenVertexes = function(v1, v2) {
+		var flag = (this.path_length[v1][v2] > 0 && this.path_length[v1][v2] != max);
+		console.log(flag, this.path_length[v1][v2]);
+		return flag;
+	}
+
+	ma.getPathVertexCoordinate = function(vtx) {
+		return {
+			x: $('#place_' + vtx).offset().left + 18,
+			y: $('#place_' + vtx).offset().top + 56,
+		}
+	}
+
+	ma.addSingleDirectPathOnMap = function(v1, v2) {
+		var pathId = '\"path_' + v1 + v2 + '\"';
+		var startVertex = this.getPathVertexCoordinate(v1);
+		var endVertex = this.getPathVertexCoordinate(v2);
+		var pathStr = '<path id=' + pathId + ' d=\"M ' + startVertex.x + ' ' + startVertex.y
+						+ ' L ' + endVertex.x + ' ' + endVertex.y + '\"></path>';
+		$('svg').html($('svg').html() + pathStr);
 	}
 
 	ma.addPath = function() {
-		var start = {};
-		var end = {};
-		// $('svg').html('<path id="path_12" d="M 487 1207 L 605 1092 551 1048"/>');
-		// console.log($('#place_1').offset().top, $('#place_1').offset().left);
-		// $('path').hide();
-		// console.log(this.shortest_path);
-	}
+		var preIdx = 0;
+		var afterIdx = 1;
+		for (preIdx = 0; preIdx < 9; preIdx ++) {
+			for (afterIdx = preIdx + 1; afterIdx < 10; afterIdx ++) {
+				if (this.hasDirectPathBetweenVertexes(preIdx, afterIdx)) {
+					this.addSingleDirectPathOnMap(preIdx, afterIdx);
+				}
+			}
+		}
+	}*/
 
 	ma.listenRouteQueryClick = function() {
 		var that = this;
@@ -85,6 +117,7 @@
 	}
 
 	ma.quitQuery = function() {
+		$('.place').attr('class', 'place normalPlace');
 		$('#placeSelect').hide();
 		$('#confirmBox').slideUp(50);
 		$('.result').attr('class', 'result notChosenResult');
@@ -119,6 +152,7 @@
 		var that = this;
 		$('.place').each(function(index, el) {
 			if (($(this).attr('title')).substr(3) == placeName) {
+				$('.' + enFlag1 + 'Place').attr('class', 'place normalPlace');
 				$(this).attr('class', 'place ' + enFlag1 + 'Place');
 				that.properties[enFlag1 + 'Place'] = placeName;
 				return false;
@@ -143,7 +177,7 @@
 	ma.listenSelect = function() {
 		var that = this;
 		$('#placeSelect td').click(function(event) {
-			var placeName = $(event.target).html();
+			var placeName = $(event.target).attr('id');
 			that.setSelect($('#selectTip').html() == '请选择起点', placeName);
 		});
 	}
@@ -158,11 +192,39 @@
 		}
 	}
 
+	ma.showPath = function() {
+		//补丁：对以工学院为起点或终点的路线，如果交通方式是开车，需要先绕行至游泳馆
+		if (this.properties['transportation'] == '开车') {
+			if (this.pathStartIdx == 4) {
+				this.pathStartIdx = 5;
+				this.properties['routeLength'] = this.shortest_path[this.pathStartIdx][this.pathEndIdx]
+												 + this.shortest_path[4][5];
+				this.properties['timeCost'] = Math.ceil(this.properties['routeLength'] / 500);
+				$('#path_45').show();
+			} else if (this.pathEndIdx == 4) {
+				this.pathEndIdx = 5;
+				this.properties['routeLength'] = this.shortest_path[this.pathStartIdx][this.pathEndIdx]
+												 + this.shortest_path[4][5];
+				this.properties['timeCost'] = Math.ceil(this.properties['routeLength'] / 500);
+				$('#path_45').show();
+			}
+		}
+		//结束补丁
+		var pathFound = this.findShortestPath(this.pathStartIdx, this.pathEndIdx);
+		for (var idx = 0; idx < pathFound.length - 1; idx ++) {
+			if (pathFound[idx] < pathFound[idx + 1])
+				$('#path_' + pathFound[idx] + pathFound[idx + 1]).show();
+			else
+				$('#path_' + pathFound[idx + 1] + pathFound[idx]).show();
+		}
+	}
+
 	ma.showResult = function() {
 		this.changeRouteQueryButton(true);
+		this.showPath();
 		$('#placeName').html('查询结果：');
-		$('#briefInfo').html('起点：' + this.properties['startPlace']
-							 + '<br>终点：' + this.properties['endPlace']
+		$('#briefInfo').html('起点：' + this.properties['startPlace'] + '(' + $('.startPlace').text() + ')'
+							 + '<br>终点：' + this.properties['endPlace'] + '(' + $('.endPlace').text() + ')'
 							 + '<br>路线如图，长度约' + this.properties['routeLength'] + '米'
 							 + '<br>' + this.properties['transportation']
 							 + '需要约' + this.properties['timeCost'] + '分钟');
@@ -172,21 +234,29 @@
 	}
 
 	ma.setRouteProper = function() {
-		// this.properties['routeLength'] = 3500;
+		this.pathStartIdx = parseInt($(".startPlace").html());
+		this.pathEndIdx = parseInt($(".endPlace").html());
 		this.properties['transportation'] = $('.chosenTab').html();
+		this.properties['routeLength'] =
+			this.shortest_path[this.pathStartIdx][this.pathEndIdx];
 		this.properties['timeCost'] =
-			(this.properties['routeLength'] /
+			Math.ceil(this.properties['routeLength'] /
 			 (this.properties['transportation'] == '步行' ? 70 : 500));
-		this.quitQuery();
 	}
 
 	ma.listenAgree = function() {
 		var that = this;
 		$('#agree').click(function(event) {
-			that.setRouteProper();
-			//窗口定位至起点
-			$("html,body").animate({scrollTop:$(".startPlace").offset().top - 260}, 'fast');
-			that.showResult();
+			var notChosenResult = ($('.notChosenResult'));
+			if (notChosenResult.length != 0) {
+				alert('路线端点未选择齐全!');
+			} else {
+				that.setRouteProper();
+				//窗口定位至起点
+				$("html,body").animate({scrollTop:$(".startPlace").offset().top - 260}, 'fast');
+				that.showResult();
+				that.quitQuery();
+			}
 		});
 	}
 
@@ -194,16 +264,16 @@
 		var that = this;
 		$('.place').click(function(event) {
 			console.log($(event.target).offset().top + ' ' + $(event.target).offset().left);
-			$('#confirmBox').slideUp(100);
+			that.quitQuery();
 			$('#infoContainer').slideDown(200);
 			var placeName = ($(event.target).attr('title')).substr(3);
 			$('#placeName').html('地名：' + placeName);
-			$('#briefInfo').html('简介：' + that.briefInfoSet[placeName]);
+			$('#briefInfo').html('编号：' + $(event.target).text() + '<br>简介：' + that.briefInfoSet[placeName]);
 			$('#imgBox').css('background-image', 'url(\"../img/spot/' + ($(this).index()) + '.jpg\")');
 		});
 	}
 
-	ma.listenCloseInfo = function() {
+	ma.listenCloseInfoContainer = function() {
 		$('#closeTag').click(function(event) {
 			$('#infoContainer').slideUp(100);
 		});
@@ -212,6 +282,7 @@
 	ma.restore = function() {
 		this.changeRouteQueryButton(false);
 		$('.place').attr('class', 'place normalPlace');
+		$('path').hide();
 		$('#infoContainer').slideUp(100);
 	}
 

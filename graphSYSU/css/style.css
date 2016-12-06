@@ -206,6 +206,10 @@ button
 	width: 35px;
 	height: 56px;
 	background-size: 35px 56px;
+	background-repeat: no-repeat;
+	color: white;
+	font-size: 30px;
+	padding-left: 10px;
 }
 
 .place:hover
@@ -247,8 +251,8 @@ button
 
 #place_5
 {
-	left: 772px;
-	top: 766px;
+	left: 720px;
+	top: 714px;
 }
 
 #place_6
@@ -259,8 +263,8 @@ button
 
 #place_7
 {
-	left: 931px;
-	top: 953px;
+	left: 870px;
+	top: 865px;
 }
 
 #place_8
@@ -271,8 +275,8 @@ button
 
 #place_9
 {
-	left: 895px;
-	top: 1404px;
+	left: 870px;
+	top: 1330px;
 }
 
 .normalPlace
